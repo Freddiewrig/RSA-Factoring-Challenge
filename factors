@@ -1,22 +1,11 @@
 #!/usr/bin/env python
 
-def factors(filename):
-    """
-    Read a file containing natural numbers and print their factorizations.
+import sys
+import time
 
-    Args:
-    - filename (str): The name of the file containing natural numbers, one per line.
+def factorize(n):
     """
-    with open(filename, 'r') as f:
-        for line in f:
-            n = int(line)
-            factorizations = _factorize(n)
-            for p, q in factorizations:
-                print(f"{n}={p}*{q}")
-
-def _factorize(n):
-    """
-    Factorize a number into a list of tuples representing pairs of factors (p, q).
+    Factorize a number into a product of two smaller numbers.
 
     Args:
     - n (int): The number to be factorized.
@@ -24,24 +13,34 @@ def _factorize(n):
     Returns:
     - list: List of tuples representing pairs of factors.
     """
-    if n <= 1:
-        return []
     factors = []
-    i = 2
-    while i * i <= n:
+    for i in range(2, n // 2 + 1):
         if n % i == 0:
-            n //= i
-            factors.append((i, n))
-            i = 2
-        else:
-            i += 1
-            if n > 1:
-                factors.append((n, 1))
-                return factors
-if __name__ == '__main__':
-    import sys
+            factors.append((i, n // i))
+    return factors
+
+def main():
     if len(sys.argv) != 2:
         print("Usage: factors <file>")
         sys.exit(1)
-        filename = sys.argv[1]
-        factors(filename)
+
+    input_file = sys.argv[1]
+
+    try:
+        with open(input_file, 'r') as file:
+            for line in file:
+                n = int(line.strip())
+                factorizations = factorize(n)
+                for p, q in factorizations:
+                    print(f"{n}={p}*{q}")
+
+    except FileNotFoundError:
+        print(f"Error: File '{input_file}' not found.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    start_time = time.time()
+    main()
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"\nElapsed Time: {elapsed_time:.3f} seconds")
